@@ -7,5 +7,5 @@ xs = [x[0] for x in li]
 ys = [x[1] for x in li]
 
 # s = points size
-pyplot.scatter(xs, ys, s=2)
+pyplot.scatter(xs, ys, s=3)
 pyplot.show()

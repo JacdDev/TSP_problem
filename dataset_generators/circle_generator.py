@@ -1,4 +1,5 @@
 import math
+import random
 
 
 # class to generate a data set in a circumference shape
@@ -16,8 +17,15 @@ class CircleGenerator:
         y = math.sin(angle) * self.radius + self.center_y
         return x, y
 
-    # function that returns a collection of points forming the circumference
+    # function that returns a random collection of points in circumference
     def generate_sample(self, sample):
+        for i in range(0, sample):
+            current_angle = random.uniform(0, 360)
+            radians = math.radians(current_angle)
+            yield self.generate_point(radians)
+
+    # function that return a collection of points in the circumference of the same distance between them
+    def generate_sample_equidistant(self, sample):
         angle_increment = 360/sample
         for i in range(0, sample):
             current_angle = angle_increment*i

@@ -35,7 +35,6 @@ def plot(node_list, solution):
     networkx.draw_networkx_nodes(graph, coord)
     networkx.draw_networkx_edges(graph, coord)
     networkx.draw_networkx_labels(graph, coord, labels, font_size=13)
-    # networkx.draw_networkx(G, with_labels=True)
 
     pyplot.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
     pyplot.tick_params(axis='y', which='both', right=False, left=False, labelleft=False)

@@ -42,3 +42,18 @@ def plot(node_list, solution):
         pyplot.gca().spines[pos].set_visible(False)
 
     pyplot.show()
+
+
+def print_result(solution, distances):
+    total_distance = 0
+    path = ""
+    for i, node in enumerate(solution):
+        if i == len(solution) - 1:
+            total_distance += distances[solution[i]][solution[0]]
+            path += str(solution[i])
+        else:
+            total_distance += distances[solution[i]][solution[i+1]]
+            path += str(solution[i]) + "->"
+    print("Path:")
+    print(path)
+    print("Distance: "+str(total_distance))

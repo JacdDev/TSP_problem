@@ -1,14 +1,15 @@
-from matplotlib import pyplot
 from dataset_generators.circle_generator import CircleGenerator
 from dataset_generators.random_generator import RandomGenerator
+from display import display
+import random
 
-# li = list(CircleGenerator().generate_sample(50))
-li = list(CircleGenerator().generate_sample_equidistant(50))
-# li = list(RandomGenerator().generate_sample(50))
+sample = 10
+#node_list = list(CircleGenerator().generate_sample(50))
+node_list = list(CircleGenerator().generate_sample_equidistant(sample))
+#node_list = list(RandomGenerator().generate_sample(50))
 
-xs = [x[0] for x in li]
-ys = [x[1] for x in li]
+# create a random solution
+solution = list(range(0, sample))
+random.shuffle(solution)
 
-# s = points size
-pyplot.scatter(xs, ys, s=3)
-pyplot.show()
+display.plot(node_list, solution)

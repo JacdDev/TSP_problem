@@ -1,7 +1,7 @@
 from dataset_generators.circle_generator import CircleGenerator
 from dataset_generators.random_generator import RandomGenerator
 from display import display
-from solvers.simulated_annealing import SimulatedAnnealing
+from solvers.simulated_annealing import SimulatedAnnealing, StoppingCriterion
 import solvers.reinforcement_learning
 import random
 import math
@@ -21,12 +21,14 @@ for idx_origin, node_origin in enumerate(node_list):
             math.sqrt(sum([(a - b) ** 2 for a, b in zip(node_origin, node_destination)]))
         )
 
-# # run simulated annealing
-# sa = SimulatedAnnealing(100000, 0.99, 0.001)
-# solution = sa.run(node_list, distances)
-#
-# # display result
-# display.plot(node_list, solution)
-# display.print_result(solution, distances)
+# run simulated annealing
+sa = SimulatedAnnealing()
+sa.stopping_criterion = StoppingCriterion.ITERATIONS
+sa.max_iterations = 10000
+solution = sa.run(node_list, distances)
 
-solvers.reinforcement_learning.run()
+# display result
+display.plot(node_list, solution)
+display.print_result(solution, distances)
+
+#solvers.reinforcement_learning.run()

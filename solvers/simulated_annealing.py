@@ -1,13 +1,24 @@
 import random
 import math
+from enum import Enum
+import queue
+
+
+class StoppingCriterion(Enum):
+    ITERATIONS = 1  # stop when makes a number of iterations
+    TEMPERATURE = 2  # stop when reach a min temperature
+    SAME_RESULTS = 3  # stop when last results are the same
 
 
 class SimulatedAnnealing:
 
-    def __init__(self, max_iterations=1000, init_temperature=0.99, min_temperature=0.001):
-        self.max_iterations = max_iterations
-        self.init_temperature = init_temperature
-        self.min_temperature = min_temperature
+    def __init__(self):
+        self.max_iterations = 1000  # max iteration for ITERATION stopping criterion
+        self.init_temperature = 1000  # initial temperature
+        self.min_temperature = 0.001  # min temperature for TEMPERATURE stopping criterion
+        self.temperature_cooling_factor = 0.999  # cooling factor
+        self.last_results_size = 1000  # number of last result checked for SAME_RESULTS stopping criterion
+        self.stopping_criterion = StoppingCriterion.SAME_RESULTS  # stopping criterion
 
     def run(self, nodes, distances):
 
@@ -15,24 +26,34 @@ class SimulatedAnnealing:
         best_solution = list(range(0, len(nodes)))
         random.shuffle(best_solution)
 
+        last_results = queue.Queue(self.last_results_size)
         temperature = self.init_temperature
         iteration = 0
-        while iteration < self.max_iterations and temperature > self.min_temperature:
+        continue_iterating = True
+        while continue_iterating:
             # cool temperature
-            temperature *= 0.99
+            temperature *= self.temperature_cooling_factor
+            # generate new solution
             new_solution = self.select_neighbour(best_solution[:])
+            # check if we take the new solution
             if self.probability_function(best_solution, new_solution, distances, temperature) >= random.uniform(0, 1):
                 best_solution = new_solution
             iteration += 1
+            # store the solution of this iteration
+            if last_results.full():
+                last_results.get()
+            last_results.put(best_solution)
+            # check stopping criterion
+            continue_iterating = self.check_stopping_criterion(iteration, temperature, last_results)
         return best_solution
 
     def select_neighbour(self, solution):
         # select positions to swap randomly
         pos1 = random.randrange(len(solution) - 1)
         pos2 = random.randrange(len(solution) - 1)
-        #pos2 = pos1+1
-        #if pos2 == len(solution):
-        #    pos2 = 0
+        # pos2 = pos1+1
+        # if pos2 == len(solution):
+        #     pos2 = 0
         # swap positions
         solution[pos1], solution[pos2] = solution[pos2], solution[pos1]
         return solution
@@ -58,3 +79,30 @@ class SimulatedAnnealing:
             return 1
         else:
             return math.exp((-1*(total_distance_new_solution-total_distance_best_solution))/temperature)
+
+    def check_stopping_criterion(self, iteration, temperature, last_results):
+        if self.stopping_criterion is StoppingCriterion.ITERATIONS:
+            return iteration < self.max_iterations
+        if self.stopping_criterion is StoppingCriterion.TEMPERATURE:
+            return temperature > self.min_temperature
+        if self.stopping_criterion is StoppingCriterion.SAME_RESULTS:
+            # check if any result in te queue is different
+            count_elements = 1
+            continue_result = False
+            last_results_aux = queue.Queue(self.last_results_size)
+            result1 = last_results.get()
+            last_results_aux.put(result1)
+            while not last_results.empty():
+                count_elements += 1
+                result2 = last_results.get()
+                last_results_aux.put(result2)
+                if result1 != result2:
+                    continue_result = True
+                result1 = result2
+            # if there are not enough elements, continue iterating
+            if count_elements < self.last_results_size:
+                continue_result = True
+            # fill the queue again
+            while not last_results_aux.empty():
+                last_results.put(last_results_aux.get())
+            return continue_result

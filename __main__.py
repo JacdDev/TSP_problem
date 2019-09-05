@@ -22,13 +22,13 @@ for idx_origin, node_origin in enumerate(node_list):
         )
 
 # run simulated annealing
-sa = SimulatedAnnealing()
-sa.stopping_criterion = StoppingCriterion.ITERATIONS
-sa.max_iterations = 10000
-solution = sa.run(node_list, distances)
+# sa = SimulatedAnnealing()
+# sa.stopping_criterion = StoppingCriterion.ITERATIONS
+# sa.max_iterations = 10000
+# solution = sa.run(node_list, distances)
 
 # display result
-display.plot(node_list, solution)
-display.print_result(solution, distances)
+# display.plot(node_list, solution)
+# display.print_result(solution, distances)
 
-#solvers.reinforcement_learning.run()
+solvers.reinforcement_learning.run()

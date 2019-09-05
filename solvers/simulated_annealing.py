@@ -34,9 +34,9 @@ class SimulatedAnnealing:
             # cool temperature
             temperature *= self.temperature_cooling_factor
             # generate new solution
-            new_solution = self.select_neighbour(best_solution[:])
+            new_solution = self._select_neighbour(best_solution[:])
             # check if we take the new solution
-            if self.probability_function(best_solution, new_solution, distances, temperature) >= random.uniform(0, 1):
+            if self._probability_function(best_solution, new_solution, distances, temperature) >= random.uniform(0, 1):
                 best_solution = new_solution
             iteration += 1
             # store the solution of this iteration
@@ -47,7 +47,7 @@ class SimulatedAnnealing:
             continue_iterating = self.check_stopping_criterion(iteration, temperature, last_results)
         return best_solution
 
-    def select_neighbour(self, solution):
+    def _select_neighbour(self, solution):
         # select positions to swap randomly
         pos1 = random.randrange(len(solution) - 1)
         pos2 = random.randrange(len(solution) - 1)
@@ -58,7 +58,7 @@ class SimulatedAnnealing:
         solution[pos1], solution[pos2] = solution[pos2], solution[pos1]
         return solution
 
-    def probability_function(self, best_solution, new_solution, distances, temperature):
+    def _probability_function(self, best_solution, new_solution, distances, temperature):
         # calculate the value of best solution
         total_distance_best_solution = 0
         for i, node in enumerate(best_solution):
